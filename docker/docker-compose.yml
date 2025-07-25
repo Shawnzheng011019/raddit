@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend.Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/backend.Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend:/app
+      - ../wide-deep:/wide-deep
+    environment:
+      - DATABASE_URL=sqlite:///./raddit.db
+    depends_on:
+      - milvus
+    command: bash -c "python scripts/init_db.py && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  milvus:
+    image: milvusdb/milvus:v2.4.4
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    environment:
+      ETCD_USE_EMBED: "true"
+      ETCD_DATA_DIR: "/var/lib/milvus/etcd"
+      ETCD_CONFIG_PATH: "/milvus/configs/embedEtcd.yaml"
+      COMMON_STORAGETYPE: "local"
+    volumes:
+      - milvus_data:/var/lib/milvus
+    command: ["milvus", "run", "standalone"]
+
+volumes:
+  milvus_data:

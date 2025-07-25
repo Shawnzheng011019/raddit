@@ -1,0 +1,8 @@
+fastapi==0.95.0
+uvicorn[standard]==0.21.1
+pydantic==1.10.7
+sqlalchemy==2.0.10
+pymilvus==2.4.4
+torch==2.0.1
+pyyaml==6.0
+python-dotenv==1.0.0
