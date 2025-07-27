@@ -1,0 +1,3 @@
+[submodule "wide-deep"]
+	path = wide-deep
+	url = https://github.com/Shawnzheng011019/wide-deep.git
